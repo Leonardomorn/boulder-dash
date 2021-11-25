@@ -271,3 +271,17 @@ void move_right(MAP* map)
     }
 
 }
+
+int allocate_map(int **mapa)
+{
+    int i;
+    int j;
+    
+    mapa = malloc (HORIZONTAL_TILE * sizeof (int*));
+    mapa[0] = malloc (HORIZONTAL_TILE * VERTICAL_TILE * sizeof (int));
+    for (i=1; i < HORIZONTAL_TILE; i++)
+    {
+        mapa[i] = mapa[0] + i * VERTICAL_TILE;
+    }
+    return 0;
+}

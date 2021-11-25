@@ -18,7 +18,10 @@ void must_init(bool test, const char *description)
 
 int main()
 {
+    int **mapa;
     MAP map;
+    allocate_map(mapa);
+    initialize_map(mapa);
     fill_initial_map(&map);
     
 
