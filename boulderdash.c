@@ -4,8 +4,7 @@
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
 #include "map.h"
-#define horizontal_pixel 1300
-#define vertical_pixel   700
+
 
 void must_init(bool test, const char *description)
 {
@@ -15,10 +14,29 @@ void must_init(bool test, const char *description)
     exit(1);
 }
 
+
+
 int main()
 {
-    int map[horizontal_pixel/16+1][vertical_pixel/16+1];
-    must_init(al_init(), "allegro");
+    int* map[] = (int**)malloc( VERTICAL_TILE * sizeof(int*));
+    allocate_map(&map); 
+
+    int i;
+    int j;
+
+    for (i = 0; i<22; i++)
+        {
+            for(j = 0; j< 40 ; j++)
+            {
+                if (i == 0 || i == 21 || j == 0 || j == 39)   // boarder places
+                {
+                    printf("%d ", map[i][j]);                
+                }
+                 printf("\n");
+            }
+        }
+
+    /*must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
@@ -27,7 +45,7 @@ int main()
     ALLEGRO_EVENT_QUEUE* queue = al_create_event_queue();
     must_init(queue, "queue");
 
-    ALLEGRO_DISPLAY* disp = al_create_display(horizontal_pixel, vertical_pixel);
+    ALLEGRO_DISPLAY* disp = al_create_display(HORIZONTAL_PIXEL, VERTICAL_PIXEL);
     must_init(disp, "display");
 
     ALLEGRO_FONT* font = al_create_builtin_font();
@@ -87,7 +105,7 @@ int main()
     al_destroy_font(font);
     al_destroy_display(disp);
     al_destroy_timer(timer);
-    al_destroy_event_queue(queue);
-
+    al_destroy_event_queue(queue); */
+    free_map(&map);
     return 0;
 }

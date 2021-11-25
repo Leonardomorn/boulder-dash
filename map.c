@@ -2,16 +2,27 @@
 #include <dirent.h>
 #include "map.h"
 
-int draw_initial_map(int map[][])
+void allocate_map(int** map[])
 {
-    fill_boarders(map);
-    fill_initial_dirt(map);
-    fill_wall(map);
-    fill_exceptions(map);
+    int i;
+
+    for (i = 0; i < VERTICAL_TILE; i++)
+    {
+        map[i] = (int*)malloc(HORIZONTAL_TILE * sizeof(int));
+    }
 
 }
 
-int fill_wall(int map[][])
+int fill_initial_map(int** map[])
+{
+    fill_borders(&map);
+    fill_dirt(&map);
+    fill_wall(&map);
+    fill_exceptions(&map);
+
+}
+
+int fill_wall(int** map[])
 {
     int i;
     int j;
@@ -25,9 +36,8 @@ int fill_wall(int map[][])
     {
         map[i][j] = map_wall; 
     }
-    for ()
 }
-int fill_boarders(int map[][])
+int fill_borders(int** map[])
 {
     int i;
     int j;
@@ -46,7 +56,7 @@ int fill_boarders(int map[][])
     return 0;    
 }
 
-int fill_initial_dirt(int map[][])
+int fill_dirt(int** map[])
 {
     int i;
     int j;
@@ -61,7 +71,7 @@ int fill_initial_dirt(int map[][])
     return 0;
 }
 
-int fill_exceptions(int map[][])
+int fill_exceptions(int** map[]) //ordenado por linha
 {
     map[1][7] = map_hole; map[1][10] = map_diamond; map[1][12] = map_boulder; map[1][13] = map_hole; map[1][19] = map_boulder; map[1][21] = map_boulder; map[1][29] = map_hole; map[1][34] = map_boulder; 
     map[2][2] = map_boulder; map[2][3] = map_rockford; map[2][4] = map_boulder; map[2][11] = map_hole; map[2][21] = map_boulder; map[2][22] = map_diamond; map[2][25] = map_boulder; map[2][30] = map_hole; map[2][36] = map_hole;
@@ -76,7 +86,7 @@ int fill_exceptions(int map[][])
     map[11][2] = map_hole; map[11][8] = map_boulder;  map[11][17] = map_boulder; map[11][18] = map_boulder; map[11][19] = map_hole; map[11][27] = map_boulder; map[11][30] = map_boulder; map[11][32] = map_diamond; map[11][37] = map_hole;
     map[12][2] = map_boulder; map[12][5] = map_hole;  map[12][8] = map_boulder; map[12][10] = map_hole; map[12][11] = map_hole; map[12][17] = map_boulder; map[12][19] = map_boulder; map[12][20] = map_diamond; map[12][23] = map_diamond; map[12][28] = map_boulder; map[12][32] = map_boulder; map[12][35] = map_diamond; map[12][37] = map_boulder;
     map[13][2] = map_diamond; map[13][3] = map_boulder; map[13][18] = map_boulder; map[13][19] = map_boulder; map[13][20] = map_boulder; map[13][23] = map_boulder; map[13][32] = map_diamond; map[13][38] = map_boulder;
-    map[15][1] = map_hole; map[15][2] = map_hole; map[15][12] = map_hole; map[15][16] = map_diamond; map[15][21] = map_boulder; map[15][map[15][27] = map_boulder; map[15][31] = map_boulder;
+    map[15][1] = map_hole; map[15][2] = map_hole; map[15][12] = map_hole; map[15][16] = map_diamond; map[15][21] = map_boulder;map[15][27] = map_boulder; map[15][31] = map_boulder;
     map[16][1] = map_boulder; map[16][2] = map_hole; map[16][12] = map_boulder; map[16][13] = map_boulder; map[16][16] = map_boulder; map[16][25] = map_boulder; map[16][32] = map_boulder; map[16][34] = map_boulder; map[16][35] = map_hole; map[16][38] = map_exit;
     map[17][2] = map_boulder; map[17][5] = map_boulder; map[17][14] = map_boulder; map[17][20] = map_boulder; map[17][22] = map_hole; map[17][23] = map_hole;  map[17][28] = map_diamond; map[17][32] = map_boulder; map[17][34] = map_boulder; map[17][35] = map_boulder;
     map[18][5] = map_boulder; map[18][6] = map_diamond; map[18][9] = map_hole; map[18][18] = map_boulder; map[18][25] = map_boulder; map[18][27] = map_boulder; map[18][28] = map_diamond; map[18][35] = map_boulder; 
