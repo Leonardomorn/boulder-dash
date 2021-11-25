@@ -54,8 +54,8 @@ int main()
     must_init(wall, "wall");   
     ALLEGRO_BITMAP* rockford = al_load_bitmap("resources/images/rockford.png");
     must_init(rockford, "rockford");   
-    // ALLEGRO_BITMAP* hole = al_load_bitmap("resources/images/hole.png");
-    // must_init(hole, "hole");   
+    ALLEGRO_BITMAP* hole = al_load_bitmap("resources/images/hole.png");
+    must_init(hole, "hole");   
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
@@ -80,6 +80,17 @@ int main()
                 break;
 
             case ALLEGRO_EVENT_KEY_DOWN:
+                if(event.keyboard.keycode == ALLEGRO_KEY_UP)
+                    move_up(&map);
+                if(event.keyboard.keycode == ALLEGRO_KEY_DOWN)
+                    move_down(&map);
+                if(event.keyboard.keycode == ALLEGRO_KEY_LEFT)
+                    move_left(&map);
+                if(event.keyboard.keycode == ALLEGRO_KEY_RIGHT)
+                    move_right(&map);
+
+                if(event.keyboard.keycode != ALLEGRO_KEY_ESCAPE)
+                    break;        
             case ALLEGRO_EVENT_DISPLAY_CLOSE:
                 done = true;
                 break;
@@ -94,8 +105,9 @@ int main()
             al_clear_to_color(al_map_rgb(71, 47, 23));
             // draw_score();
             // draw_map(map);
-            al_draw_bitmap(steel, 0, 0, 0);
-            al_draw_bitmap(steel, 16, 0, 0);
+            // al_draw_bitmap(steel, 0, 0, 0);
+            // al_draw_bitmap(steel, 16, 0, 0);
+            draw_map(map,  boulder,  diamond,  dirt,  exit,  magicwall, steel, wall,  rockford, hole);
 
 
 

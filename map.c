@@ -109,7 +109,7 @@ int load_sprites()
     return(0);
 }
 
-int draw_map(MAP* map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO_BITMAP* dirt, ALLEGRO_BITMAP* exit, ALLEGRO_BITMAP* magicwall, ALLEGRO_BITMAP* steel, ALLEGRO_BITMAP* wall, ALLEGRO_BITMAP* rockford, ALLEGRO_BITMAP* hole)
+int draw_map(MAP map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO_BITMAP* dirt, ALLEGRO_BITMAP* exit, ALLEGRO_BITMAP* magicwall, ALLEGRO_BITMAP* steel, ALLEGRO_BITMAP* wall, ALLEGRO_BITMAP* rockford, ALLEGRO_BITMAP* hole)
 {
     int i;
     int j;
@@ -118,15 +118,132 @@ int draw_map(MAP* map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO
         {
             for(j = 0; j< 40 ; j++)
             {
-                switch (map[i][j])
+                switch (map.data[i][j])
                 {
-                case /* constant-expression */:
-                    /* code */
+                case MAP_BOULDER:
+                    al_draw_bitmap(boulder, j*16, (i+1)*16, 0);
                     break;
-                
+                case MAP_DIAMOND:
+                    al_draw_bitmap(diamond, j*16, (i+1)*16, 0);
+                    break;
+                case MAP_DIRT:
+                    al_draw_bitmap(dirt, j*16, (i+1)*16, 0);
+                    break;
+                case MAP_EXIT:
+                    al_draw_bitmap(exit, j*16, (i+1)*16, 0);
+                    break;
+                case MAP_MAGICWALL:
+                    al_draw_bitmap(magicwall, j*16, (i+1)*16, 0);
+                    break;
+                case MAP_STEEL:
+                    al_draw_bitmap(steel, j*16, (i+1)*16, 0);
+                    break;
+                case MAP_WALL:
+                    al_draw_bitmap(wall, j*16, (i+1)*16, 0);
+                    break;
+                case MAP_ROCKFORD:
+                    al_draw_bitmap(rockford, j*16, (i+1)*16, 0);
+                    break;      
+                case MAP_HOLE:
+                    al_draw_bitmap(hole, j*16, (i+1)*16, 0);
+                    break;          
                 default:
                     break;
                 }   
             }
-        }    
+        }   
+    return 0; 
+}
+
+void find_rockford(int*x, int *y, MAP map)
+{
+    int i;
+    int j;
+    for (i = 0; i<22; i++)
+    {
+        for(j = 0; j< 40 ; j++)
+        {
+            if (map.data[i][j] == MAP_ROCKFORD)
+            {
+                *y = i;
+                *x = j;
+                return;
+            }
+
+        }
+    }    
+}
+void move_up(MAP* map)
+{
+    int rockford_x;
+    int rockford_y;
+    find_rockford(&rockford_x,&rockford_y,*map);
+    if (map->data[rockford_y - 1][rockford_x] == MAP_DIRT || 
+        map->data[rockford_y - 1][rockford_x] == MAP_EXIT ||
+        map->data[rockford_y - 1][rockford_x] == MAP_HOLE ||  
+        map->data[rockford_y - 1][rockford_x] == MAP_DIAMOND )
+    {
+       map->data[rockford_y][rockford_x] = MAP_HOLE;
+       map->data[rockford_y - 1][rockford_x] = MAP_ROCKFORD;
+    }
+
+}
+void move_down(MAP* map)
+{
+    int rockford_x;
+    int rockford_y;
+    find_rockford(&rockford_x,&rockford_y,*map);
+    if (map->data[rockford_y + 1][rockford_x] == MAP_DIRT || 
+        map->data[rockford_y + 1][rockford_x] == MAP_EXIT ||
+        map->data[rockford_y + 1][rockford_x] == MAP_HOLE ||  
+        map->data[rockford_y + 1][rockford_x] == MAP_DIAMOND )
+    {
+       map->data[rockford_y][rockford_x] = MAP_HOLE;
+       map->data[rockford_y + 1][rockford_x] = MAP_ROCKFORD;
+    }
+
+
+}
+void move_left(MAP* map)
+{
+    int rockford_x;
+    int rockford_y;
+    find_rockford(&rockford_x,&rockford_y,*map);
+    if (map->data[rockford_y][rockford_x -1] == MAP_DIRT || 
+        map->data[rockford_y][rockford_x -1] == MAP_EXIT ||
+        map->data[rockford_y][rockford_x -1] == MAP_HOLE ||  
+        map->data[rockford_y][rockford_x -1] == MAP_DIAMOND )
+    {
+       map->data[rockford_y][rockford_x] = MAP_HOLE;
+       map->data[rockford_y][rockford_x -1] = MAP_ROCKFORD;
+    }
+    else if((map->data[rockford_y][rockford_x -1] == MAP_BOULDER) && (map->data[rockford_y][rockford_x -2] == MAP_HOLE) )
+    {
+        map->data[rockford_y][rockford_x] = MAP_HOLE;
+        map->data[rockford_y][rockford_x -1] = MAP_ROCKFORD;
+        map->data[rockford_y][rockford_x -2] = MAP_BOULDER;
+    }
+
+
+}
+void move_right(MAP* map)
+{
+    int rockford_x;
+    int rockford_y;
+    find_rockford(&rockford_x,&rockford_y,*map);
+    if (map->data[rockford_y][rockford_x +1] == MAP_DIRT || 
+        map->data[rockford_y][rockford_x +1] == MAP_EXIT ||
+        map->data[rockford_y][rockford_x +1] == MAP_HOLE ||  
+        map->data[rockford_y][rockford_x +1] == MAP_DIAMOND )
+    {
+       map->data[rockford_y][rockford_x] = MAP_HOLE;
+       map->data[rockford_y][rockford_x +1] = MAP_ROCKFORD;
+    }
+    else if((map->data[rockford_y][rockford_x +1] == MAP_BOULDER) && (map->data[rockford_y][rockford_x +2] == MAP_HOLE) )
+    {
+        map->data[rockford_y][rockford_x] = MAP_HOLE;
+        map->data[rockford_y][rockford_x +1] = MAP_ROCKFORD;
+        map->data[rockford_y][rockford_x +2] = MAP_BOULDER;
+    }
+
 }

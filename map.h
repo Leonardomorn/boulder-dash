@@ -34,3 +34,10 @@ void fill_wall(MAP* map);
 void fill_borders(MAP* map);
 void fill_dirt(MAP* map);
 void fill_exceptions(MAP* map); //ordenado por linha
+int draw_map(MAP map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO_BITMAP* dirt, ALLEGRO_BITMAP* exit,
+     ALLEGRO_BITMAP* magicwall, ALLEGRO_BITMAP* steel, ALLEGRO_BITMAP* wall, ALLEGRO_BITMAP* rockford, ALLEGRO_BITMAP* hole);
+
+void move_up(MAP* map);
+void move_down(MAP* map);
+void move_left(MAP* map);
+void move_right(MAP* map);
