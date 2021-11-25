@@ -188,10 +188,30 @@ void move_up(MAP* map)
     }
 
 }
+bool rock_may_fall(MAP map, int previous_rockford_x, int previous_rockford_y, int* falling_boulder_x, int* falling_boulder_y)
+{
+    if(map.data[previous_rockford_y -1][previous_rockford_x] == MAP_BOULDER)
+        return 1;
+    return 0;
+}
+
+void fall_boulder(MAP* map, int falling_boulder_x, int falling_boulder_y)
+{
+    while (map->data[falling_boulder_y +1][falling_boulder_x] == MAP_HOLE)
+    {
+        map->data[falling_boulder_y][falling_boulder_x] = MAP_HOLE;
+        map->data[falling_boulder_y +1][falling_boulder_x] = MAP_BOULDER;
+        falling_boulder_y ++;
+    }
+    
+}
 void move_down(MAP* map)
 {
     int rockford_x;
     int rockford_y;
+    int has_moved = 0;
+    int falling_boulder_x;
+    int falling_boulder_y;
     find_rockford(&rockford_x,&rockford_y,*map);
     if (map->data[rockford_y + 1][rockford_x] == MAP_DIRT || 
         map->data[rockford_y + 1][rockford_x] == MAP_EXIT ||
@@ -200,8 +220,12 @@ void move_down(MAP* map)
     {
        map->data[rockford_y][rockford_x] = MAP_HOLE;
        map->data[rockford_y + 1][rockford_x] = MAP_ROCKFORD;
+       has_moved = 1;
     }
-
+    if (has_moved && rock_may_fall(*map, rockford_x, rockford_y, &falling_boulder_x, &falling_boulder_y))
+    {
+        fall_boulder(map, falling_boulder_x, falling_boulder_y);
+    }
 
 }
 void move_left(MAP* map)
