@@ -2,42 +2,34 @@
 #include <dirent.h>
 #include "map.h"
 
-void allocate_map(int** map[])
-{
-    int i;
 
-    for (i = 0; i < VERTICAL_TILE; i++)
-    {
-        map[i] = (int*)malloc(HORIZONTAL_TILE * sizeof(int));
-    }
+
+void fill_initial_map(MAP* map)
+{
+    fill_borders(map);
+    fill_dirt(map);
+    fill_wall(map);
+    fill_exceptions(map);
 
 }
 
-int fill_initial_map(int** map[])
+void fill_wall(MAP* map)
 {
-    fill_borders(&map);
-    fill_dirt(&map);
-    fill_wall(&map);
-    fill_exceptions(&map);
-
-}
-
-int fill_wall(int** map[])
-{
+    //int* map_int[][] = (int *) map;
     int i;
     int j;
     i = 7;
     for (j =1 ; j<=30 ; j++ )
     {
-        map[i][j] = map_wall;
+        map->data[i][j] = MAP_WALL;
     }
     i = 14;
     for (j = 9 ; j <= 38 ; j++)
     {
-        map[i][j] = map_wall; 
+        map->data[i][j] = MAP_WALL; 
     }
 }
-int fill_borders(int** map[])
+void fill_borders(MAP* map)
 {
     int i;
     int j;
@@ -48,15 +40,15 @@ int fill_borders(int** map[])
             {
                 if (i == 0 || i == 21 || j == 0 || j == 39)   // boarder places
                 {
-                    map[i][j] = map_steel;                
+                    map->data[i][j] = MAP_STEEL;                
                 }
                 
             }
         }    
-    return 0;    
+
 }
 
-int fill_dirt(int** map[])
+void fill_dirt(MAP* map)
 {
     int i;
     int j;
@@ -65,40 +57,40 @@ int fill_dirt(int** map[])
         {
             for(j = 1; j< 39 ; j++)
             {
-                map[i][j] = map_dirt;
+                map->data[i][j] = MAP_DIRT;
             }
         }    
-    return 0;
+
 }
 
-int fill_exceptions(int** map[]) //ordenado por linha
+void fill_exceptions(MAP* map) //ordenado por linha
 {
-    map[1][7] = map_hole; map[1][10] = map_diamond; map[1][12] = map_boulder; map[1][13] = map_hole; map[1][19] = map_boulder; map[1][21] = map_boulder; map[1][29] = map_hole; map[1][34] = map_boulder; 
-    map[2][2] = map_boulder; map[2][3] = map_rockford; map[2][4] = map_boulder; map[2][11] = map_hole; map[2][21] = map_boulder; map[2][22] = map_diamond; map[2][25] = map_boulder; map[2][30] = map_hole; map[2][36] = map_hole;
-    map[3][11] = map_hole; map[3][14] = map_hole; map[3][20] = map_boulder; map[3][22] = map_boulder; map[3][25] = map_boulder; map[3][34] = map_boulder;
-    map[4][1] = map_boulder; map[4][3] = map_hole;  map[4][4] = map_hole; map[4][14] = map_boulder; map[4][21] = map_boulder; map[4][24] = map_boulder; map[4][29] = map_boulder; map[4][33] = map_boulder; 
-    map[5][1] = map_boulder; map[5][3] = map_hole; map[5][4] = map_boulder; map[5][14] = map_boulder; map[5][15] = map_boulder; map[5][18] = map_boulder; map[5][27] = map_boulder; map[5][34] = map_boulder; map[5][36] = map_boulder; map[5][37] = map_hole;
-    map[6][4] = map_boulder; map[6][7] = map_boulder; map[6][16] = map_boulder; map[6][22] = map_boulder; map[6][24] = map_hole; map[6][25] = map_boulder; map[6][34] = map_boulder; map[6][36] = map_boulder; map[6][37] = map_boulder;
-    map[7][34] = map_boulder; map[7][37] = map_boulder;
-    map[8][2] = map_hole; map[8][6] = map_boulder; map[8][9] = map_diamond; map[8][11] = map_hole; map[8][14] = map_boulder; map[8][16] = map_boulder; map[8][27] = map_diamond; map[8][29] = map_boulder; map[8][30] = map_hole; map[8][37] = map_boulder;
-    map[9][3] = map_diamond; map[9][9] = map_boulder; map[9][15] = map_hole; map[9][24] = map_boulder; map[9][25] = map_hole; map[9][26] = map_hole; map[9][27] = map_boulder; map[9][30] = map_diamond; map[9][35] = map_boulder;
-    map[10][4] = map_boulder; map[10][7] = map_boulder; map[10][9] = map_boulder; map[10][24] = map_boulder; map[10][25] = map_boulder; map[10][27] = map_boulder; map[10][30] = map_boulder;
-    map[11][2] = map_hole; map[11][8] = map_boulder;  map[11][17] = map_boulder; map[11][18] = map_boulder; map[11][19] = map_hole; map[11][27] = map_boulder; map[11][30] = map_boulder; map[11][32] = map_diamond; map[11][37] = map_hole;
-    map[12][2] = map_boulder; map[12][5] = map_hole;  map[12][8] = map_boulder; map[12][10] = map_hole; map[12][11] = map_hole; map[12][17] = map_boulder; map[12][19] = map_boulder; map[12][20] = map_diamond; map[12][23] = map_diamond; map[12][28] = map_boulder; map[12][32] = map_boulder; map[12][35] = map_diamond; map[12][37] = map_boulder;
-    map[13][2] = map_diamond; map[13][3] = map_boulder; map[13][18] = map_boulder; map[13][19] = map_boulder; map[13][20] = map_boulder; map[13][23] = map_boulder; map[13][32] = map_diamond; map[13][38] = map_boulder;
-    map[15][1] = map_hole; map[15][2] = map_hole; map[15][12] = map_hole; map[15][16] = map_diamond; map[15][21] = map_boulder;map[15][27] = map_boulder; map[15][31] = map_boulder;
-    map[16][1] = map_boulder; map[16][2] = map_hole; map[16][12] = map_boulder; map[16][13] = map_boulder; map[16][16] = map_boulder; map[16][25] = map_boulder; map[16][32] = map_boulder; map[16][34] = map_boulder; map[16][35] = map_hole; map[16][38] = map_exit;
-    map[17][2] = map_boulder; map[17][5] = map_boulder; map[17][14] = map_boulder; map[17][20] = map_boulder; map[17][22] = map_hole; map[17][23] = map_hole;  map[17][28] = map_diamond; map[17][32] = map_boulder; map[17][34] = map_boulder; map[17][35] = map_boulder;
-    map[18][5] = map_boulder; map[18][6] = map_diamond; map[18][9] = map_hole; map[18][18] = map_boulder; map[18][25] = map_boulder; map[18][27] = map_boulder; map[18][28] = map_diamond; map[18][35] = map_boulder; 
-    map[19][4] = map_hole; map[19][7] = map_hole; map[19][9] = map_boulder; map[19][12] = map_boulder; map[19][14] = map_boulder; map[19][15] = map_boulder; map[19][25] = map_boulder; map[19][27] = map_boulder; map[19][28] = map_diamond; map[19][35] = map_boulder; map[19][38] = map_boulder;
-    map[20][2] = map_diamond; map[20][7] = map_boulder; map[20][13] = map_hole; map[20][23] = map_hole; map[20][25] = map_boulder; map[20][28] = map_boulder; map[20][33] = map_boulder; map[20][37] = map_boulder;
+    map->data[1][7] = MAP_HOLE; map->data[1][10] = MAP_DIAMOND; map->data[1][12] = MAP_BOULDER; map->data[1][13] = MAP_HOLE; map->data[1][19] = MAP_BOULDER; map->data[1][21] = MAP_BOULDER; map->data[1][29] = MAP_HOLE; map->data[1][34] = MAP_BOULDER; 
+    map->data[2][2] = MAP_BOULDER; map->data[2][3] = MAP_ROCKFORD; map->data[2][4] = MAP_BOULDER; map->data[2][11] = MAP_HOLE; map->data[2][21] = MAP_BOULDER; map->data[2][22] = MAP_DIAMOND; map->data[2][25] = MAP_BOULDER; map->data[2][30] = MAP_HOLE; map->data[2][36] = MAP_HOLE;
+    map->data[3][11] = MAP_HOLE; map->data[3][14] = MAP_HOLE; map->data[3][20] = MAP_BOULDER; map->data[3][22] = MAP_BOULDER; map->data[3][25] = MAP_BOULDER; map->data[3][34] = MAP_BOULDER;
+    map->data[4][1] = MAP_BOULDER; map->data[4][3] = MAP_HOLE;  map->data[4][4] = MAP_HOLE; map->data[4][14] = MAP_BOULDER; map->data[4][21] = MAP_BOULDER; map->data[4][24] = MAP_BOULDER; map->data[4][29] = MAP_BOULDER; map->data[4][33] = MAP_BOULDER; 
+    map->data[5][1] = MAP_BOULDER; map->data[5][3] = MAP_HOLE; map->data[5][4] = MAP_BOULDER; map->data[5][14] = MAP_BOULDER; map->data[5][15] = MAP_BOULDER; map->data[5][18] = MAP_BOULDER; map->data[5][27] = MAP_BOULDER; map->data[5][34] = MAP_BOULDER; map->data[5][36] = MAP_BOULDER; map->data[5][37] = MAP_HOLE;
+    map->data[6][4] = MAP_BOULDER; map->data[6][7] = MAP_BOULDER; map->data[6][16] = MAP_BOULDER; map->data[6][22] = MAP_BOULDER; map->data[6][24] = MAP_HOLE; map->data[6][25] = MAP_BOULDER; map->data[6][34] = MAP_BOULDER; map->data[6][36] = MAP_BOULDER; map->data[6][37] = MAP_BOULDER;
+    map->data[7][34] = MAP_BOULDER; map->data[7][37] = MAP_BOULDER;
+    map->data[8][2] = MAP_HOLE; map->data[8][6] = MAP_BOULDER; map->data[8][9] = MAP_DIAMOND; map->data[8][11] = MAP_HOLE; map->data[8][14] = MAP_BOULDER; map->data[8][16] = MAP_BOULDER; map->data[8][27] = MAP_DIAMOND; map->data[8][29] = MAP_BOULDER; map->data[8][30] = MAP_HOLE; map->data[8][37] = MAP_BOULDER;
+    map->data[9][3] = MAP_DIAMOND; map->data[9][9] = MAP_BOULDER; map->data[9][15] = MAP_HOLE; map->data[9][24] = MAP_BOULDER; map->data[9][25] = MAP_HOLE; map->data[9][26] = MAP_HOLE; map->data[9][27] = MAP_BOULDER; map->data[9][30] = MAP_DIAMOND; map->data[9][35] = MAP_BOULDER;
+    map->data[10][4] = MAP_BOULDER; map->data[10][7] = MAP_BOULDER; map->data[10][9] = MAP_BOULDER; map->data[10][24] = MAP_BOULDER; map->data[10][25] = MAP_BOULDER; map->data[10][27] = MAP_BOULDER; map->data[10][30] = MAP_BOULDER;
+    map->data[11][2] = MAP_HOLE; map->data[11][8] = MAP_BOULDER;  map->data[11][17] = MAP_BOULDER; map->data[11][18] = MAP_BOULDER; map->data[11][19] = MAP_HOLE; map->data[11][27] = MAP_BOULDER; map->data[11][30] = MAP_BOULDER; map->data[11][32] = MAP_DIAMOND; map->data[11][37] = MAP_HOLE;
+    map->data[12][2] = MAP_BOULDER; map->data[12][5] = MAP_HOLE;  map->data[12][8] = MAP_BOULDER; map->data[12][10] = MAP_HOLE; map->data[12][11] = MAP_HOLE; map->data[12][17] = MAP_BOULDER; map->data[12][19] = MAP_BOULDER; map->data[12][20] = MAP_DIAMOND; map->data[12][23] = MAP_DIAMOND; map->data[12][28] = MAP_BOULDER; map->data[12][32] = MAP_BOULDER; map->data[12][35] = MAP_DIAMOND; map->data[12][37] = MAP_BOULDER;
+    map->data[13][2] = MAP_DIAMOND; map->data[13][3] = MAP_BOULDER; map->data[13][18] = MAP_BOULDER; map->data[13][19] = MAP_BOULDER; map->data[13][20] = MAP_BOULDER; map->data[13][23] = MAP_BOULDER; map->data[13][32] = MAP_DIAMOND; map->data[13][38] = MAP_BOULDER;
+    map->data[15][1] = MAP_HOLE; map->data[15][2] = MAP_HOLE; map->data[15][12] = MAP_HOLE; map->data[15][16] = MAP_DIAMOND; map->data[15][21] = MAP_BOULDER;map->data[15][27] = MAP_BOULDER; map->data[15][31] = MAP_BOULDER;
+    map->data[16][1] = MAP_BOULDER; map->data[16][2] = MAP_HOLE; map->data[16][12] = MAP_BOULDER; map->data[16][13] = MAP_BOULDER; map->data[16][16] = MAP_BOULDER; map->data[16][25] = MAP_BOULDER; map->data[16][32] = MAP_BOULDER; map->data[16][34] = MAP_BOULDER; map->data[16][35] = MAP_HOLE; map->data[16][38] = MAP_EXIT;
+    map->data[17][2] = MAP_BOULDER; map->data[17][5] = MAP_BOULDER; map->data[17][14] = MAP_BOULDER; map->data[17][20] = MAP_BOULDER; map->data[17][22] = MAP_HOLE; map->data[17][23] = MAP_HOLE;  map->data[17][28] = MAP_DIAMOND; map->data[17][32] = MAP_BOULDER; map->data[17][34] = MAP_BOULDER; map->data[17][35] = MAP_BOULDER;
+    map->data[18][5] = MAP_BOULDER; map->data[18][6] = MAP_DIAMOND; map->data[18][9] = MAP_HOLE; map->data[18][18] = MAP_BOULDER; map->data[18][25] = MAP_BOULDER; map->data[18][27] = MAP_BOULDER; map->data[18][28] = MAP_DIAMOND; map->data[18][35] = MAP_BOULDER; 
+    map->data[19][4] = MAP_HOLE; map->data[19][7] = MAP_HOLE; map->data[19][9] = MAP_BOULDER; map->data[19][12] = MAP_BOULDER; map->data[19][14] = MAP_BOULDER; map->data[19][15] = MAP_BOULDER; map->data[19][25] = MAP_BOULDER; map->data[19][27] = MAP_BOULDER; map->data[19][28] = MAP_DIAMOND; map->data[19][35] = MAP_BOULDER; map->data[19][38] = MAP_BOULDER;
+    map->data[20][2] = MAP_DIAMOND; map->data[20][7] = MAP_BOULDER; map->data[20][13] = MAP_HOLE; map->data[20][23] = MAP_HOLE; map->data[20][25] = MAP_BOULDER; map->data[20][28] = MAP_BOULDER; map->data[20][33] = MAP_BOULDER; map->data[20][37] = MAP_BOULDER;
 }
 
-int draw_bitmap_from_images_directory()
+int load_sprites()
 {
     DIR *folder;
 
-    folder = opendir("Images");
+    folder = opendir("resources/images");
     if(folder == NULL)
     {
         puts("Unable to read directory");
@@ -108,8 +100,33 @@ int draw_bitmap_from_images_directory()
     {
         puts("Directory is opened!");
     }
+
+
+
+
     closedir(folder);
 
     return(0);
 }
 
+int draw_map(MAP* map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO_BITMAP* dirt, ALLEGRO_BITMAP* exit, ALLEGRO_BITMAP* magicwall, ALLEGRO_BITMAP* steel, ALLEGRO_BITMAP* wall, ALLEGRO_BITMAP* rockford, ALLEGRO_BITMAP* hole)
+{
+    int i;
+    int j;
+
+    for (i = 0; i<22; i++)
+        {
+            for(j = 0; j< 40 ; j++)
+            {
+                switch (map[i][j])
+                {
+                case /* constant-expression */:
+                    /* code */
+                    break;
+                
+                default:
+                    break;
+                }   
+            }
+        }    
+}

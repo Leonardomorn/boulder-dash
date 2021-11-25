@@ -18,25 +18,11 @@ void must_init(bool test, const char *description)
 
 int main()
 {
-    int* map[] = (int**)malloc( VERTICAL_TILE * sizeof(int*));
-    allocate_map(&map); 
+    MAP map;
+    fill_initial_map(&map);
+    
 
-    int i;
-    int j;
-
-    for (i = 0; i<22; i++)
-        {
-            for(j = 0; j< 40 ; j++)
-            {
-                if (i == 0 || i == 21 || j == 0 || j == 39)   // boarder places
-                {
-                    printf("%d ", map[i][j]);                
-                }
-                 printf("\n");
-            }
-        }
-
-    /*must_init(al_init(), "allegro");
+    must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
     ALLEGRO_TIMER* timer = al_create_timer(1.0 / 60.0);
@@ -52,8 +38,24 @@ int main()
     must_init(font, "font");
 
     must_init(al_init_image_addon(), "image addon");
-    ALLEGRO_BITMAP* steel = al_load_bitmap("steel.png");
-    must_init(steel, "steel");    
+    ALLEGRO_BITMAP* boulder = al_load_bitmap("resources/images/boulder.png");
+    must_init(boulder, "boulder");    
+    ALLEGRO_BITMAP* diamond = al_load_bitmap("resources/images/diamond.png");
+    must_init(diamond, "diamond");   
+    ALLEGRO_BITMAP* dirt = al_load_bitmap("resources/images/dirt.png");
+    must_init(dirt, "dirt");   
+    ALLEGRO_BITMAP* exit = al_load_bitmap("resources/images/exit.png");
+    must_init(exit, "exit"); 
+    ALLEGRO_BITMAP* magicwall = al_load_bitmap("resources/images/magicwall.png");
+    must_init(magicwall, "magicwall");   
+    ALLEGRO_BITMAP* steel = al_load_bitmap("resources/images/steel.png");
+    must_init(steel, "steel");   
+    ALLEGRO_BITMAP* wall = al_load_bitmap("resources/images/wall.png");
+    must_init(wall, "wall");   
+    ALLEGRO_BITMAP* rockford = al_load_bitmap("resources/images/rockford.png");
+    must_init(rockford, "rockford");   
+    // ALLEGRO_BITMAP* hole = al_load_bitmap("resources/images/hole.png");
+    // must_init(hole, "hole");   
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
@@ -90,6 +92,8 @@ int main()
         if(redraw && al_is_event_queue_empty(queue))
         {
             al_clear_to_color(al_map_rgb(71, 47, 23));
+            // draw_score();
+            // draw_map(map);
             al_draw_bitmap(steel, 0, 0, 0);
             al_draw_bitmap(steel, 16, 0, 0);
 
@@ -105,7 +109,6 @@ int main()
     al_destroy_font(font);
     al_destroy_display(disp);
     al_destroy_timer(timer);
-    al_destroy_event_queue(queue); */
-    free_map(&map);
+    al_destroy_event_queue(queue); 
     return 0;
 }
