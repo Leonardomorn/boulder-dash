@@ -17,6 +17,7 @@ void must_init(bool test, const char *description)
 
 int main()
 {
+    int map[horizontal_pixel/16+1][vertical_pixel/16+1];
     must_init(al_init(), "allegro");
     must_init(al_install_keyboard(), "keyboard");
 
