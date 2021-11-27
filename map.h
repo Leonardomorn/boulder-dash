@@ -1,9 +1,10 @@
+#pragma once
 #include <stdio.h>
 #include <stdlib.h>
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
-#include "internal_math.h"
+#include <dirent.h>
 
 #define MAP_BOULDER 1
 #define MAP_DIAMOND 2
@@ -17,10 +18,8 @@
 
 #define HORIZONTAL_PIXEL 1300
 #define VERTICAL_PIXEL 700
-#define HORIZONTAL_TILE (HORIZONTAL_PIXEL/16 + 1)
+#define HORIZONTAL_TILE (HORIZONTAL_PIXEL/16 + 1) 
 #define VERTICAL_TILE (VERTICAL_PIXEL/16 + 1)
-
-
 
 
 typedef struct {
@@ -36,8 +35,5 @@ void fill_dirt(MAP* map);
 void fill_exceptions(MAP* map); //ordenado por linha
 int draw_map(MAP map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO_BITMAP* dirt, ALLEGRO_BITMAP* exit,
      ALLEGRO_BITMAP* magicwall, ALLEGRO_BITMAP* steel, ALLEGRO_BITMAP* wall, ALLEGRO_BITMAP* rockford, ALLEGRO_BITMAP* hole);
+void find_rockford(int*x, int *y, MAP map);
 
-void move_up(MAP* map);
-void move_down(MAP* map);
-void move_left(MAP* map);
-void move_right(MAP* map);

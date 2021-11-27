@@ -1,8 +1,4 @@
-#include <stdio.h>
-#include <dirent.h>
 #include "map.h"
-
-
 
 void fill_initial_map(MAP* map)
 {
@@ -63,7 +59,7 @@ void fill_dirt(MAP* map)
 
 }
 
-void fill_exceptions(MAP* map) //ordenado por linha
+void fill_exceptions(MAP* map) /*ordenado por linha*/
 {
     map->data[1][7] = MAP_HOLE; map->data[1][10] = MAP_DIAMOND; map->data[1][12] = MAP_BOULDER; map->data[1][13] = MAP_HOLE; map->data[1][19] = MAP_BOULDER; map->data[1][21] = MAP_BOULDER; map->data[1][29] = MAP_HOLE; map->data[1][34] = MAP_BOULDER; 
     map->data[2][2] = MAP_BOULDER; map->data[2][3] = MAP_ROCKFORD; map->data[2][4] = MAP_BOULDER; map->data[2][11] = MAP_HOLE; map->data[2][21] = MAP_BOULDER; map->data[2][22] = MAP_DIAMOND; map->data[2][25] = MAP_BOULDER; map->data[2][30] = MAP_HOLE; map->data[2][36] = MAP_HOLE;
@@ -173,115 +169,12 @@ void find_rockford(int*x, int *y, MAP map)
         }
     }    
 }
-void move_up(MAP* map)
+
+void push_boulder_right()
 {
-    int rockford_x;
-    int rockford_y;
-    find_rockford(&rockford_x,&rockford_y,*map);
-    if (map->data[rockford_y - 1][rockford_x] == MAP_DIRT || 
-        map->data[rockford_y - 1][rockford_x] == MAP_EXIT ||
-        map->data[rockford_y - 1][rockford_x] == MAP_HOLE ||  
-        map->data[rockford_y - 1][rockford_x] == MAP_DIAMOND )
-    {
-       map->data[rockford_y][rockford_x] = MAP_HOLE;
-       map->data[rockford_y - 1][rockford_x] = MAP_ROCKFORD;
-    }
 
 }
-bool rock_may_fall(MAP map, int previous_rockford_x, int previous_rockford_y, int* falling_boulder_x, int* falling_boulder_y)
+void push_boulder_left()
 {
-    if(map.data[previous_rockford_y -1][previous_rockford_x] == MAP_BOULDER)
-        return 1;
-    return 0;
-}
-
-void fall_boulder(MAP* map, int falling_boulder_x, int falling_boulder_y)
-{
-    while (map->data[falling_boulder_y +1][falling_boulder_x] == MAP_HOLE)
-    {
-        map->data[falling_boulder_y][falling_boulder_x] = MAP_HOLE;
-        map->data[falling_boulder_y +1][falling_boulder_x] = MAP_BOULDER;
-        falling_boulder_y ++;
-    }
     
-}
-void move_down(MAP* map)
-{
-    int rockford_x;
-    int rockford_y;
-    int has_moved = 0;
-    int falling_boulder_x;
-    int falling_boulder_y;
-    find_rockford(&rockford_x,&rockford_y,*map);
-    if (map->data[rockford_y + 1][rockford_x] == MAP_DIRT || 
-        map->data[rockford_y + 1][rockford_x] == MAP_EXIT ||
-        map->data[rockford_y + 1][rockford_x] == MAP_HOLE ||  
-        map->data[rockford_y + 1][rockford_x] == MAP_DIAMOND )
-    {
-       map->data[rockford_y][rockford_x] = MAP_HOLE;
-       map->data[rockford_y + 1][rockford_x] = MAP_ROCKFORD;
-       has_moved = 1;
-    }
-    if (has_moved && rock_may_fall(*map, rockford_x, rockford_y, &falling_boulder_x, &falling_boulder_y))
-    {
-        fall_boulder(map, falling_boulder_x, falling_boulder_y);
-    }
-
-}
-void move_left(MAP* map)
-{
-    int rockford_x;
-    int rockford_y;
-    find_rockford(&rockford_x,&rockford_y,*map);
-    if (map->data[rockford_y][rockford_x -1] == MAP_DIRT || 
-        map->data[rockford_y][rockford_x -1] == MAP_EXIT ||
-        map->data[rockford_y][rockford_x -1] == MAP_HOLE ||  
-        map->data[rockford_y][rockford_x -1] == MAP_DIAMOND )
-    {
-       map->data[rockford_y][rockford_x] = MAP_HOLE;
-       map->data[rockford_y][rockford_x -1] = MAP_ROCKFORD;
-    }
-    else if((map->data[rockford_y][rockford_x -1] == MAP_BOULDER) && (map->data[rockford_y][rockford_x -2] == MAP_HOLE) )
-    {
-        map->data[rockford_y][rockford_x] = MAP_HOLE;
-        map->data[rockford_y][rockford_x -1] = MAP_ROCKFORD;
-        map->data[rockford_y][rockford_x -2] = MAP_BOULDER;
-    }
-
-
-}
-void move_right(MAP* map)
-{
-    int rockford_x;
-    int rockford_y;
-    find_rockford(&rockford_x,&rockford_y,*map);
-    if (map->data[rockford_y][rockford_x +1] == MAP_DIRT || 
-        map->data[rockford_y][rockford_x +1] == MAP_EXIT ||
-        map->data[rockford_y][rockford_x +1] == MAP_HOLE ||  
-        map->data[rockford_y][rockford_x +1] == MAP_DIAMOND )
-    {
-       map->data[rockford_y][rockford_x] = MAP_HOLE;
-       map->data[rockford_y][rockford_x +1] = MAP_ROCKFORD;
-    }
-    else if((map->data[rockford_y][rockford_x +1] == MAP_BOULDER) && (map->data[rockford_y][rockford_x +2] == MAP_HOLE) )
-    {
-        map->data[rockford_y][rockford_x] = MAP_HOLE;
-        map->data[rockford_y][rockford_x +1] = MAP_ROCKFORD;
-        map->data[rockford_y][rockford_x +2] = MAP_BOULDER;
-    }
-
-}
-
-int allocate_map(int **mapa)
-{
-    int i;
-    int j;
-    
-    mapa = malloc (HORIZONTAL_TILE * sizeof (int*));
-    mapa[0] = malloc (HORIZONTAL_TILE * VERTICAL_TILE * sizeof (int));
-    for (i=1; i < HORIZONTAL_TILE; i++)
-    {
-        mapa[i] = mapa[0] + i * VERTICAL_TILE;
-    }
-    return 0;
 }
