@@ -7,6 +7,9 @@
 #include "falling_list.h"
 #include "movement.h"
 #include "fall.h"
+#include "menu_commands.h"
+
+
 
 void must_init(bool test, const char *description)
 {
@@ -21,6 +24,8 @@ int main()
 {
     MAP map;
     t_list falling_objects;
+    int diamond_counter = 0; 
+
 
     fill_initial_map(&map);
     initialize_list(&falling_objects);
@@ -63,36 +68,45 @@ int main()
     must_init(rockford, "rockford");
     ALLEGRO_BITMAP *hole = al_load_bitmap("resources/images/hole.png");
     must_init(hole, "hole");
+    ALLEGRO_BITMAP *explosion = al_load_bitmap("resources/images/explosion.png");
+    must_init(explosion, "explosion");    
 
     al_register_event_source(queue, al_get_keyboard_event_source());
     al_register_event_source(queue, al_get_display_event_source(disp));
-    al_register_event_source(queue, al_get_timer_event_source(timer));
+    al_register_event_source(queue, al_get_timer_event_source(timer_fall));
 
     bool done = false;
     bool redraw = true;
     ALLEGRO_EVENT event;
 
     al_start_timer(timer);
+    al_start_timer(timer_fall);
     while (1)
     {
         al_wait_for_event(queue, &event);
+        
 
+        
         switch (event.type)
         {
         case ALLEGRO_EVENT_TIMER:
             /*game logic goes here*/
+        fall_object(&map, &falling_objects);
+
             redraw = true;
             break;
 
         case ALLEGRO_EVENT_KEY_DOWN:
             if (event.keyboard.keycode == ALLEGRO_KEY_UP)
-                move_up(&map, &falling_objects);
-            else if (event.keyboard.keycode == ALLEGRO_KEY_DOWN)
-                move_down(&map, &falling_objects);
-            else if (event.keyboard.keycode == ALLEGRO_KEY_LEFT)
-                move_left(&map, &falling_objects);
-            else if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT)
-                move_right(&map, &falling_objects);
+                move_up(&map, &falling_objects, &diamond_counter);
+            if (event.keyboard.keycode == ALLEGRO_KEY_DOWN)
+                move_down(&map, &falling_objects, &diamond_counter);
+            if (event.keyboard.keycode == ALLEGRO_KEY_LEFT)
+                move_left(&map, &falling_objects, &diamond_counter);
+            if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT)
+                move_right(&map, &falling_objects, &diamond_counter);
+            if (event.keyboard.keycode == ALLEGRO_KEY_R)
+                restart_game(&map, &falling_objects);
 
             if (event.keyboard.keycode != ALLEGRO_KEY_ESCAPE)
                 break;
@@ -108,13 +122,18 @@ int main()
         {
             al_clear_to_color(al_map_rgb(71, 47, 23));
             // draw_score();
-            draw_map(map, boulder, diamond, dirt, exit, magicwall, steel, wall, rockford, hole);
+            draw_map(map, boulder, diamond, dirt, exit, magicwall, steel, wall, rockford, hole, explosion);
 
             al_flip_display();
 
             redraw = false;
         }
+
+
+
     }
+
+
 
     al_destroy_font(font);
     al_destroy_display(disp);

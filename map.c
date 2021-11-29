@@ -75,7 +75,7 @@ void fill_exceptions(MAP* map) /*ordenado por linha*/
     map->data[12][2] = MAP_BOULDER; map->data[12][5] = MAP_HOLE;  map->data[12][8] = MAP_BOULDER; map->data[12][10] = MAP_HOLE; map->data[12][11] = MAP_HOLE; map->data[12][17] = MAP_BOULDER; map->data[12][19] = MAP_BOULDER; map->data[12][20] = MAP_DIAMOND; map->data[12][23] = MAP_DIAMOND; map->data[12][28] = MAP_BOULDER; map->data[12][32] = MAP_BOULDER; map->data[12][35] = MAP_DIAMOND; map->data[12][37] = MAP_BOULDER;
     map->data[13][2] = MAP_DIAMOND; map->data[13][3] = MAP_BOULDER; map->data[13][18] = MAP_BOULDER; map->data[13][19] = MAP_BOULDER; map->data[13][20] = MAP_BOULDER; map->data[13][23] = MAP_BOULDER; map->data[13][32] = MAP_DIAMOND; map->data[13][38] = MAP_BOULDER;
     map->data[15][1] = MAP_HOLE; map->data[15][2] = MAP_HOLE; map->data[15][12] = MAP_HOLE; map->data[15][16] = MAP_DIAMOND; map->data[15][21] = MAP_BOULDER;map->data[15][27] = MAP_BOULDER; map->data[15][31] = MAP_BOULDER;
-    map->data[16][1] = MAP_BOULDER; map->data[16][2] = MAP_HOLE; map->data[16][12] = MAP_BOULDER; map->data[16][13] = MAP_BOULDER; map->data[16][16] = MAP_BOULDER; map->data[16][25] = MAP_BOULDER; map->data[16][32] = MAP_BOULDER; map->data[16][34] = MAP_BOULDER; map->data[16][35] = MAP_HOLE; map->data[16][38] = MAP_EXIT;
+    map->data[16][1] = MAP_BOULDER; map->data[16][2] = MAP_HOLE; map->data[16][12] = MAP_BOULDER; map->data[16][13] = MAP_BOULDER; map->data[16][16] = MAP_BOULDER; map->data[16][25] = MAP_BOULDER; map->data[16][32] = MAP_BOULDER; map->data[16][34] = MAP_BOULDER; map->data[16][35] = MAP_HOLE; map->data[16][38] = MAP_STEEL; // 16 38 is exit
     map->data[17][2] = MAP_BOULDER; map->data[17][5] = MAP_BOULDER; map->data[17][14] = MAP_BOULDER; map->data[17][20] = MAP_BOULDER; map->data[17][22] = MAP_HOLE; map->data[17][23] = MAP_HOLE;  map->data[17][28] = MAP_DIAMOND; map->data[17][32] = MAP_BOULDER; map->data[17][34] = MAP_BOULDER; map->data[17][35] = MAP_BOULDER;
     map->data[18][5] = MAP_BOULDER; map->data[18][6] = MAP_DIAMOND; map->data[18][9] = MAP_HOLE; map->data[18][18] = MAP_BOULDER; map->data[18][25] = MAP_BOULDER; map->data[18][27] = MAP_BOULDER; map->data[18][28] = MAP_DIAMOND; map->data[18][35] = MAP_BOULDER; 
     map->data[19][4] = MAP_HOLE; map->data[19][7] = MAP_HOLE; map->data[19][9] = MAP_BOULDER; map->data[19][12] = MAP_BOULDER; map->data[19][14] = MAP_BOULDER; map->data[19][15] = MAP_BOULDER; map->data[19][25] = MAP_BOULDER; map->data[19][27] = MAP_BOULDER; map->data[19][28] = MAP_DIAMOND; map->data[19][35] = MAP_BOULDER; map->data[19][38] = MAP_BOULDER;
@@ -105,7 +105,7 @@ int load_sprites()
     return(0);
 }
 
-int draw_map(MAP map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO_BITMAP* dirt, ALLEGRO_BITMAP* exit, ALLEGRO_BITMAP* magicwall, ALLEGRO_BITMAP* steel, ALLEGRO_BITMAP* wall, ALLEGRO_BITMAP* rockford, ALLEGRO_BITMAP* hole)
+int draw_map(MAP map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO_BITMAP* dirt, ALLEGRO_BITMAP* exit, ALLEGRO_BITMAP* magicwall, ALLEGRO_BITMAP* steel, ALLEGRO_BITMAP* wall, ALLEGRO_BITMAP* rockford, ALLEGRO_BITMAP* hole, ALLEGRO_BITMAP* explosion)
 {
     int i;
     int j;
@@ -142,7 +142,10 @@ int draw_map(MAP map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO_
                     break;      
                 case MAP_HOLE:
                     al_draw_bitmap(hole, j*16, (i+1)*16, 0);
-                    break;          
+                    break;
+                case MAP_EXPLOSION:
+                    al_draw_bitmap(explosion, j*16, (i+1)*16, 0);
+                    break;         
                 default:
                     break;
                 }   
@@ -151,10 +154,11 @@ int draw_map(MAP map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO_
     return 0; 
 }
 
-void find_rockford(int*x, int *y, MAP map)
-{
+int find_rockford(int*x, int *y, MAP map)
+{   
     int i;
     int j;
+    int has_rockford = 0;
     for (i = 0; i<22; i++)
     {
         for(j = 0; j< 40 ; j++)
@@ -163,18 +167,11 @@ void find_rockford(int*x, int *y, MAP map)
             {
                 *y = i;
                 *x = j;
-                return;
+                has_rockford = 1;
+                return has_rockford;
             }
 
         }
     }    
-}
-
-void push_boulder_right()
-{
-
-}
-void push_boulder_left()
-{
-    
+    return has_rockford;
 }

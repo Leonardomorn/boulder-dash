@@ -1,6 +1,6 @@
 #include "fall.h"
 
-void fall(MAP* map, t_knot* object,int drop_type)
+void fall(MAP* map, t_knot* object,int drop_type, t_list* falling_list)
 {
     if(drop_type == DOWN)
     {
@@ -20,8 +20,40 @@ void fall(MAP* map, t_knot* object,int drop_type)
         map->data[object->y][(object->x) -1] = object->entity;
         object->x--;    
     }
+    if(drop_type == KILL_ROCKFORD)
+    {
+        if(map->data[((object->y)+1)][object->x] == MAP_ROCKFORD)
+    {
+        remove_list(falling_list, object);
+        kill_rockford(map); 
+        return;
+    }
+        else
+        {
+            map->data[object->y][object->x] = MAP_HOLE;
+            map->data[(object->y)+1][object->x] = object->entity;
+            object->y++;
+        }
+    }
 }
 
+void kill_rockford(MAP* map)
+{
+    int rockford_x;
+    int rockford_y;
+    find_rockford(&rockford_x, &rockford_y, *map );
+
+    map->data[rockford_y -1 ][rockford_x -1] = MAP_EXPLOSION;
+    map->data[rockford_y -1 ][rockford_x   ] = MAP_EXPLOSION;
+    map->data[rockford_y -1 ][rockford_x +1] = MAP_EXPLOSION;
+    map->data[rockford_y    ][rockford_x -1] = MAP_EXPLOSION;
+    map->data[rockford_y    ][rockford_x   ] = MAP_EXPLOSION;
+    map->data[rockford_y    ][rockford_x +1] = MAP_EXPLOSION;
+    map->data[rockford_y +1 ][rockford_x -1] = MAP_EXPLOSION;
+    map->data[rockford_y +1 ][rockford_x   ] = MAP_EXPLOSION;
+    map->data[rockford_y +1 ][rockford_x +1] = MAP_EXPLOSION;
+
+}
 
 int fall_object(MAP* map, t_list* falling_list)
 {
@@ -37,15 +69,16 @@ int fall_object(MAP* map, t_list* falling_list)
         drop = object_can_fall(map, falling_list, knot_aux); /*return 0 case false, 
                                                                1 case drops down, 
                                                                2 case slide right ,
-                                                               3 case slide left */
+                                                               3 case slide left.
+                                                               4 case kill rockford */
         if (drop)
         {
-            fall(map, knot_aux, drop);
+            fall(map, knot_aux, drop, falling_list);
         }
-        // else
-        // { 
-        //     unapend (falling_list, knot_aux);
-        // }
+        else
+        { 
+            remove_list(falling_list, knot_aux);
+        }
         knot_aux = knot_aux->next_knot;
     }
     return 1;

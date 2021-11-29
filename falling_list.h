@@ -28,5 +28,6 @@ int append(t_list *l,int x_cord,int y_cord, int entity);
 void remove_first_list(t_list *l);
 void destroy_list(t_list *l);
 int remove_between_knot(t_list *l, t_knot* knot);
-int remove_final_knot(t_list *l, t_knot* knot);
+int remove_final_knot(t_list *l);
 int already_on_list(t_list *l,int x_cord,int y_cord);
+int remove_list(t_list* l, t_knot* knot);

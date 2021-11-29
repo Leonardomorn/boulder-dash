@@ -130,14 +130,14 @@ int remove_between_knot(t_list *l, t_knot* knot)
     return 1;
 }
 
-int remove_final_knot(t_list *l, t_knot* knot)
+int remove_final_knot(t_list *l)
 {
     if (l->size <2)
     {
         printf("can't remove last knot");
         return 0;
     }
-
+    t_knot* knot = l->last;
     knot->prev_knot->next_knot = NULL;
     l->last = knot->prev_knot;
     free(knot);
@@ -146,6 +146,7 @@ int remove_final_knot(t_list *l, t_knot* knot)
 }
 
 int already_on_list(t_list *l,int x_cord,int y_cord)
+/*return 0 case false and 1 case true*/
 {
     t_knot* knot_aux;
     int count;
@@ -163,3 +164,17 @@ int already_on_list(t_list *l,int x_cord,int y_cord)
     
 }
 
+int remove_list(t_list* l, t_knot* knot)
+{
+    if(already_on_list (l, knot->x, knot->y)){
+        if(l->first == knot)
+            remove_first_list(l);
+        else if(l->last == knot)
+            remove_final_knot(l);
+        else 
+            remove_between_knot(l, knot);   
+        return 1;
+    }
+    return 0;
+
+}

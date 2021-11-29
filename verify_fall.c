@@ -221,7 +221,7 @@ void verify_fall_left (MAP* map, int previous_rockford_x, int previous_rockford_
 }
 
 int object_can_fall(MAP* map, t_list* falling_list, t_knot* object)
-/*return 0 case false, 1 case drops down, 2 case slide right , 3 case slide left */
+/*return 0 case false, 1 case drops down, 2 case slide right , 3 case slide left, 4 case kill rockford */
 {
     if((map->data[((object->y)+1)][object->x]) == MAP_HOLE)
     {
@@ -244,6 +244,10 @@ int object_can_fall(MAP* map, t_list* falling_list, t_knot* object)
                 return 3;
             }
         }
+    }
+    else if((map->data[((object->y)+1)][object->x]) == MAP_ROCKFORD)
+    {
+        return 4;
     }
     return 0;
 }
