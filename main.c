@@ -27,13 +27,14 @@ int main()
     MAP map;
     t_list falling_objects;
     int diamond_counter = 0; 
-    int diamonds_needed = 1;
+    int diamonds_needed = 10;
     int clock =150;
     int exit_closed = 1;
     int rockford_dead = 0;
     int is_on_menu = 0;
     int is_on_fame = 0;
     int victory = 0;
+    int battle_royale_var = 0;
 
 	FILE *rank = fopen("./resources/scores.txt", "r");
 	if ( ! rank )
@@ -86,7 +87,7 @@ int main()
     ALLEGRO_EVENT_QUEUE *queue = al_create_event_queue();
     must_init(queue, "queue");
 
-    ALLEGRO_DISPLAY *disp = al_create_display(HORIZONTAL_PIXEL, VERTICAL_PIXEL);
+    ALLEGRO_DISPLAY *disp = al_create_display(800, 500);
     must_init(disp, "display");
 
     ALLEGRO_FONT *font = al_create_builtin_font();
@@ -144,7 +145,7 @@ int main()
                     al_play_sample(falling_sound, 1,0,1, ALLEGRO_PLAYMODE_ONCE, 0);
                 }
             }
-            if(event.timer.source == timer_clock){
+            if(event.timer.source == timer_clock){ 
             clock --;
             }
             if (diamond_counter == diamonds_needed && exit_closed)
@@ -155,6 +156,11 @@ int main()
                 exit_closed = 0;
 
             }
+            if (event.timer.source == timer_clock && battle_royale_var)
+            {
+                battle_royale(&map, colision_sound, &rockford_dead, &battle_royale_var);
+            }
+            
 
                 redraw = true;
                 break;
@@ -169,11 +175,13 @@ int main()
                 if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT)
                     move_right(&map, &falling_objects, &diamond_counter, diamond_sound, &victory);
                 if (event.keyboard.keycode == ALLEGRO_KEY_R)
-                    restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead, & exit_closed);
+                    restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead, & exit_closed, &clock, &battle_royale_var);
                 if (event.keyboard.keycode == ALLEGRO_KEY_H)
                     is_on_menu = 1;
                 if (event.keyboard.keycode == ALLEGRO_KEY_F)
                     is_on_fame = 1;
+                if (event.keyboard.keycode == ALLEGRO_KEY_1)
+                    battle_royale_var = 1;
 
                 if (event.keyboard.keycode != ALLEGRO_KEY_ESCAPE)
                     break;
@@ -185,10 +193,9 @@ int main()
             if (done)
                 break;
 
-            if (redraw && al_is_event_queue_empty(queue))
+            if (redraw && al_is_event_queue_empty(queue)) /*draw upper score and couters*/
             {
                 al_clear_to_color(al_map_rgb(71, 47, 23));
-                // draw_score();
                 draw_map(map, boulder, diamond, dirt, exit, magicwall, steel, wall, rockford, hole, explosion);
                 al_draw_textf(font, al_map_rgb(255,255,255), 0, 0, 0, "DIAMOND: %d", diamond_counter);
                 al_draw_textf(font, al_map_rgb(255,255,255), 100, 0, 0, "DIAMONDS NEEDED: %d", diamonds_needed);
@@ -199,18 +206,18 @@ int main()
 
                 redraw = false;
             }
-            if (event.timer.source == timer_fall && rockford_dead){
+            if (event.timer.source == timer_fall && rockford_dead){ /*restart the game when rockford die*/
                 sleep(1);
-                restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead, &exit_closed);
+                restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead, &exit_closed, &clock, &battle_royale_var);
             }
-            if (event.timer.source == timer_fall && victory){
+            if (event.timer.source == timer_fall && victory){   /*when victory is true, save the score and end the game*/
                 end_game(victory_sound, &clock, &diamond_counter, rank_array);
                 sleep(1);
                 done = true;
             }
 
         }
-        if(is_on_menu)
+        if(is_on_menu) /*menu 'state'*/
         {
 
                 al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -220,6 +227,8 @@ int main()
                 al_draw_text(font, al_map_rgb(255,255,255), 0, 60, 0, "Press [ESC] during the game to leave");
                 al_draw_text(font, al_map_rgb(255,255,255), 0, 80, 0, "Run from the rocks and collect the diamonds!");
                 al_draw_text(font, al_map_rgb(255,255,255), 0, 100, 0, "The faster you are and the more diamonds you collect, the higher your score");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 120, 0, "Press one to see a really nice thing, if you get stuck");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 140, 0, "on a fire, you can aways [R]eset!");                
                 al_flip_display();         
                 switch (event.type)
                 {
@@ -236,7 +245,7 @@ int main()
 
                 }
         }
-        if(is_on_fame)
+        if(is_on_fame) /*fame 'state'*/
         {
 
                 al_clear_to_color(al_map_rgb(0, 0, 0));
@@ -278,9 +287,8 @@ int main()
 
     for(int i = 0; i < 10; i++)
 	{
-        printf("imprimindo scores: %d \n", rank_array[i]);
 		fprintf(rank,"%d\n", rank_array[i]);
 	}
 	fclose(rank);
     return 0;
-}
+} 

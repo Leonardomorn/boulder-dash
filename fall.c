@@ -7,6 +7,7 @@ void fall(MAP* map, t_knot* object,int drop_type, t_list* falling_list, int* roc
         map->data[object->y][object->x] = MAP_HOLE;
         map->data[(object->y)+1][object->x] = object->entity;
         object->y++;
+        start_fall_object(map,object->x, object->y, falling_list);
 
     }
     if(drop_type == SLIDE_RIGHT)
