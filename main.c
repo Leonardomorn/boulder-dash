@@ -27,12 +27,28 @@ int main()
     MAP map;
     t_list falling_objects;
     int diamond_counter = 0; 
-    int diamonds_needed = 10;
+    int diamonds_needed = 1;
     int clock =150;
     int exit_closed = 1;
     int rockford_dead = 0;
     int is_on_menu = 0;
     int is_on_fame = 0;
+    int victory = 0;
+
+	FILE *rank = fopen("./resources/scores.txt", "r");
+	if ( ! rank )
+  	{
+		perror ("Open file error: scores.txt") ;
+		exit (1) ;
+	}
+	
+	int rank_array[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	for(int i = 0; i < 10; i++)
+	{
+		fscanf(rank,"%d\n", &rank_array[i]);
+	}
+	
+	freopen ("./resources/scores.txt", "w+", rank);
 
     fill_initial_map(&map);
     initialize_list(&falling_objects);
@@ -145,15 +161,15 @@ int main()
 
             case ALLEGRO_EVENT_KEY_DOWN:
                 if (event.keyboard.keycode == ALLEGRO_KEY_UP)
-                    move_up(&map, &falling_objects, &diamond_counter, diamond_sound);
+                    move_up(&map, &falling_objects, &diamond_counter, diamond_sound, &victory);
                 if (event.keyboard.keycode == ALLEGRO_KEY_DOWN)
-                    move_down(&map, &falling_objects, &diamond_counter, diamond_sound);
+                    move_down(&map, &falling_objects, &diamond_counter, diamond_sound, &victory);
                 if (event.keyboard.keycode == ALLEGRO_KEY_LEFT)
-                    move_left(&map, &falling_objects, &diamond_counter, diamond_sound);
+                    move_left(&map, &falling_objects, &diamond_counter, diamond_sound, &victory);
                 if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT)
-                    move_right(&map, &falling_objects, &diamond_counter, diamond_sound);
+                    move_right(&map, &falling_objects, &diamond_counter, diamond_sound, &victory);
                 if (event.keyboard.keycode == ALLEGRO_KEY_R)
-                    restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead);
+                    restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead, & exit_closed);
                 if (event.keyboard.keycode == ALLEGRO_KEY_H)
                     is_on_menu = 1;
                 if (event.keyboard.keycode == ALLEGRO_KEY_F)
@@ -185,9 +201,13 @@ int main()
             }
             if (event.timer.source == timer_fall && rockford_dead){
                 sleep(1);
-                restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead);
+                restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead, &exit_closed);
             }
-
+            if (event.timer.source == timer_fall && victory){
+                end_game(victory_sound, &clock, &diamond_counter, rank_array);
+                sleep(1);
+                done = true;
+            }
 
         }
         if(is_on_menu)
@@ -221,12 +241,11 @@ int main()
 
                 al_clear_to_color(al_map_rgb(0, 0, 0));
                 al_draw_text(font, al_map_rgb(255,255,255), 0, 0, 0, "[ESC] to leave Hall of Fame");
-                al_draw_text(font, al_map_rgb(255,255,255), 0, 20, 0, "TOP 1: ");
-                al_draw_text(font, al_map_rgb(255,255,255), 0, 40, 0, "TOP 2: ");
-                al_draw_text(font, al_map_rgb(255,255,255), 0, 60, 0, "TOP 3: ");
-                al_draw_text(font, al_map_rgb(255,255,255), 0, 80, 0, "TOP 4: ");
-                al_draw_text(font, al_map_rgb(255,255,255), 0, 100, 0, "TOP 5: ");
-
+                for (int k = 1; k <= 10; k++)
+                {
+                al_draw_textf(font, al_map_rgb(255,255,255), 0, 20 * k, 0, "TOP %d: %d",k, rank_array[k]);
+                }
+            
                 al_flip_display();         
                 switch (event.type)
                 {
@@ -256,5 +275,12 @@ int main()
 
 
     al_destroy_event_queue(queue);
+
+    for(int i = 0; i < 10; i++)
+	{
+        printf("imprimindo scores: %d \n", rank_array[i]);
+		fprintf(rank,"%d\n", rank_array[i]);
+	}
+	fclose(rank);
     return 0;
 }

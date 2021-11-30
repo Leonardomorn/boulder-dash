@@ -1,6 +1,6 @@
 #include "movement.h"
 
-void move_up(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_SAMPLE *diamond_sound)
+void move_up(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_SAMPLE *diamond_sound, int* victory)
 {
     int rockford_x;
     int rockford_y;
@@ -17,11 +17,16 @@ void move_up(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_SA
         map->data[rockford_y - 1][rockford_x] == MAP_HOLE ||  
         map->data[rockford_y - 1][rockford_x] == MAP_DIAMOND )
     {
-       if(map->data[rockford_y - 1][rockford_x] == MAP_DIAMOND)
-       {
+        if(map->data[rockford_y - 1][rockford_x] == MAP_DIAMOND)
+        {
            *diamond_counter = *diamond_counter + 1;
            al_play_sample(diamond_sound, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
-       }
+        }
+        if(map->data[rockford_y - 1][rockford_x] == MAP_EXIT)
+        {
+            *victory = 1;
+        }
+
        map->data[rockford_y][rockford_x] = MAP_HOLE;
        map->data[rockford_y - 1][rockford_x] = MAP_ROCKFORD;
        has_moved = 1;
@@ -32,7 +37,7 @@ void move_up(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_SA
 }
 
 
-void move_down(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_SAMPLE *diamond_sound)
+void move_down(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_SAMPLE *diamond_sound, int* victory)
 {
     int rockford_x;
     int rockford_y;
@@ -55,6 +60,12 @@ void move_down(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_
             al_play_sample(diamond_sound, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
 
        }
+
+        if(map->data[rockford_y + 1][rockford_x] == MAP_EXIT)
+        {
+            *victory = 1;
+        }
+
        map->data[rockford_y][rockford_x] = MAP_HOLE;
        map->data[rockford_y + 1][rockford_x] = MAP_ROCKFORD;
        has_moved = 1;
@@ -66,7 +77,7 @@ void move_down(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_
     }
 
 }
-void move_left(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_SAMPLE *diamond_sound)
+void move_left(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_SAMPLE *diamond_sound, int* victory)
 {
     int rockford_x;
     int rockford_y;
@@ -89,6 +100,12 @@ void move_left(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_
             al_play_sample(diamond_sound, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
 
        }
+
+        if(map->data[rockford_y][rockford_x -1] == MAP_EXIT)
+        {
+            *victory = 1;
+        }
+
        map->data[rockford_y][rockford_x] = MAP_HOLE;
        map->data[rockford_y][rockford_x -1] = MAP_ROCKFORD;
        has_moved = 1;
@@ -110,7 +127,7 @@ void move_left(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_
         verify_fall_left(map, rockford_x -1 , rockford_y, falling_boulder);
     }
 }
-void move_right(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_SAMPLE *diamond_sound)
+void move_right(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO_SAMPLE *diamond_sound, int* victory)
 {
     int rockford_x;
     int rockford_y;
@@ -132,6 +149,11 @@ void move_right(MAP* map, t_list* falling_boulder, int* diamond_counter, ALLEGRO
             al_play_sample(diamond_sound, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
 
        }
+        if(map->data[rockford_y][rockford_x +1] == MAP_EXIT)
+        {
+            *victory = 1;
+        }
+
        map->data[rockford_y][rockford_x] = MAP_HOLE;
        map->data[rockford_y][rockford_x +1] = MAP_ROCKFORD;
        has_moved = 1;
