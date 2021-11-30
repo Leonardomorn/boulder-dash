@@ -183,38 +183,8 @@ int main()
             sleep(1);
             restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead);
         }
-        if (is_on_menu)
-          {
-            if (redraw && al_is_event_queue_empty(queue))
-            {
-                al_clear_to_color(al_map_rgb(71, 47, 23));
-            }
-            switch (event.type)
-            {
 
-            case ALLEGRO_EVENT_KEY_DOWN:
-                if (event.keyboard.keycode == ALLEGRO_KEY_UP)
-                    move_up(&map, &falling_objects, &diamond_counter, diamond_sound);
-                if (event.keyboard.keycode == ALLEGRO_KEY_DOWN)
-                    move_down(&map, &falling_objects, &diamond_counter, diamond_sound);
-                if (event.keyboard.keycode == ALLEGRO_KEY_LEFT)
-                    move_left(&map, &falling_objects, &diamond_counter, diamond_sound);
-                if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT)
-                    move_right(&map, &falling_objects, &diamond_counter, diamond_sound);
-                if (event.keyboard.keycode == ALLEGRO_KEY_R)
-                    restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead);
-                if (event.keyboard.keycode == ALLEGRO_KEY_H)
-                    is_on_menu = 1;
-
-                if (event.keyboard.keycode != ALLEGRO_KEY_ESCAPE)
-                    break;
-            case ALLEGRO_EVENT_DISPLAY_CLOSE:
-                done = true;
-                break;
-            }
-
-          }
-        }
+        
     }
 
 
