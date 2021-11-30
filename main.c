@@ -32,6 +32,7 @@ int main()
     int exit_closed = 1;
     int rockford_dead = 0;
     int is_on_menu = 0;
+    int is_on_fame = 0;
 
     fill_initial_map(&map);
     initialize_list(&falling_objects);
@@ -111,80 +112,133 @@ int main()
     al_start_timer(timer_fall);
     al_start_timer(timer_clock);
     while (1)
-    {
-        al_wait_for_event(queue, &event);
-        
+    {   
+            al_wait_for_event(queue, &event);
+            
 
-        
-        switch (event.type)
-        {
-        case ALLEGRO_EVENT_TIMER:
-            /*game logic goes here*/
-        if(event.timer.source == timer_fall){
-            if(fall_object(&map, &falling_objects, &rockford_dead, colision_sound))
+    if (!is_on_menu && !is_on_fame)
+        {            
+            switch (event.type)
             {
-                al_play_sample(falling_sound, 1,0,1, ALLEGRO_PLAYMODE_ONCE, 0);
+            case ALLEGRO_EVENT_TIMER:
+                /*game logic goes here*/
+            if(event.timer.source == timer_fall){
+                if(fall_object(&map, &falling_objects, &rockford_dead, colision_sound))
+                {
+                    al_play_sample(falling_sound, 1,0,1, ALLEGRO_PLAYMODE_ONCE, 0);
+                }
             }
-        }
-        if(event.timer.source == timer_clock){
-        clock --;
-        }
-        if (diamond_counter == diamonds_needed && exit_closed)
-        {
-            open_exit(&map);
-            al_play_sample(creak_sound, 1,0,1, ALLEGRO_PLAYMODE_ONCE, 0);
+            if(event.timer.source == timer_clock){
+            clock --;
+            }
+            if (diamond_counter == diamonds_needed && exit_closed)
+            {
+                open_exit(&map);
+                al_play_sample(creak_sound, 1,0,1, ALLEGRO_PLAYMODE_ONCE, 0);
 
-            exit_closed = 0;
+                exit_closed = 0;
 
-        }
+            }
 
-            redraw = true;
-            break;
-
-        case ALLEGRO_EVENT_KEY_DOWN:
-            if (event.keyboard.keycode == ALLEGRO_KEY_UP)
-                move_up(&map, &falling_objects, &diamond_counter, diamond_sound);
-            if (event.keyboard.keycode == ALLEGRO_KEY_DOWN)
-                move_down(&map, &falling_objects, &diamond_counter, diamond_sound);
-            if (event.keyboard.keycode == ALLEGRO_KEY_LEFT)
-                move_left(&map, &falling_objects, &diamond_counter, diamond_sound);
-            if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT)
-                move_right(&map, &falling_objects, &diamond_counter, diamond_sound);
-            if (event.keyboard.keycode == ALLEGRO_KEY_R)
-                restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead);
-            if (event.keyboard.keycode == ALLEGRO_KEY_H)
-                is_on_menu = 1;
-
-            if (event.keyboard.keycode != ALLEGRO_KEY_ESCAPE)
+                redraw = true;
                 break;
-        case ALLEGRO_EVENT_DISPLAY_CLOSE:
-            done = true;
-            break;
+
+            case ALLEGRO_EVENT_KEY_DOWN:
+                if (event.keyboard.keycode == ALLEGRO_KEY_UP)
+                    move_up(&map, &falling_objects, &diamond_counter, diamond_sound);
+                if (event.keyboard.keycode == ALLEGRO_KEY_DOWN)
+                    move_down(&map, &falling_objects, &diamond_counter, diamond_sound);
+                if (event.keyboard.keycode == ALLEGRO_KEY_LEFT)
+                    move_left(&map, &falling_objects, &diamond_counter, diamond_sound);
+                if (event.keyboard.keycode == ALLEGRO_KEY_RIGHT)
+                    move_right(&map, &falling_objects, &diamond_counter, diamond_sound);
+                if (event.keyboard.keycode == ALLEGRO_KEY_R)
+                    restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead);
+                if (event.keyboard.keycode == ALLEGRO_KEY_H)
+                    is_on_menu = 1;
+                if (event.keyboard.keycode == ALLEGRO_KEY_F)
+                    is_on_fame = 1;
+
+                if (event.keyboard.keycode != ALLEGRO_KEY_ESCAPE)
+                    break;
+            case ALLEGRO_EVENT_DISPLAY_CLOSE:
+                done = true;
+                break;
+            }
+
+            if (done)
+                break;
+
+            if (redraw && al_is_event_queue_empty(queue))
+            {
+                al_clear_to_color(al_map_rgb(71, 47, 23));
+                // draw_score();
+                draw_map(map, boulder, diamond, dirt, exit, magicwall, steel, wall, rockford, hole, explosion);
+                al_draw_textf(font, al_map_rgb(255,255,255), 0, 0, 0, "DIAMOND: %d", diamond_counter);
+                al_draw_textf(font, al_map_rgb(255,255,255), 100, 0, 0, "DIAMONDS NEEDED: %d", diamonds_needed);
+                al_draw_textf(font, al_map_rgb(255,255,255), 300, 0, 0, "Score: %d", diamond_counter *10);
+                al_draw_textf(font, al_map_rgb(255,255,255), 400, 0, 0, "Time: %d", clock);
+                al_flip_display();
+
+
+                redraw = false;
+            }
+            if (event.timer.source == timer_fall && rockford_dead){
+                sleep(1);
+                restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead);
+            }
+
+
         }
-
-        if (done)
-            break;
-
-        if (redraw && al_is_event_queue_empty(queue))
+        if(is_on_menu)
         {
-            al_clear_to_color(al_map_rgb(71, 47, 23));
-            // draw_score();
-            draw_map(map, boulder, diamond, dirt, exit, magicwall, steel, wall, rockford, hole, explosion);
-            al_draw_textf(font, al_map_rgb(255,255,255), 0, 0, 0, "DIAMOND: %d", diamond_counter);
-            al_draw_textf(font, al_map_rgb(255,255,255), 100, 0, 0, "DIAMONDS NEEDED: %d", diamonds_needed);
-            al_draw_textf(font, al_map_rgb(255,255,255), 300, 0, 0, "Score: %d", diamond_counter *10);
-            al_draw_textf(font, al_map_rgb(255,255,255), 400, 0, 0, "Time: %d", clock);
-            al_flip_display();
+
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 0, 0, "Boulder Dash adaptation - by Leonardo Camargo");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 20, 0, "Press [H] to enter menu and [ESC] to leave menu");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 40, 0, "Press [F] to hall of fame");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 60, 0, "Press [ESC] during the game to leave");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 80, 0, "Run from the rocks and collect the diamonds!");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 100, 0, "The faster you are and the more diamonds you collect, the higher your score");
+                al_flip_display();         
+                switch (event.type)
+                {
+                    case ALLEGRO_EVENT_KEY_DOWN: 
 
 
-            redraw = false;
+                if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+                    is_on_menu = 0;
+                if (event.keyboard.keycode == ALLEGRO_KEY_F)
+                {
+                    is_on_fame = 1;
+                    is_on_menu = 0;
+                }
+
+                }
         }
-        if (event.timer.source == timer_fall && rockford_dead){
-            sleep(1);
-            restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead);
+        if(is_on_fame)
+        {
+
+                al_clear_to_color(al_map_rgb(0, 0, 0));
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 0, 0, "[ESC] to leave Hall of Fame");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 20, 0, "TOP 1: ");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 40, 0, "TOP 2: ");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 60, 0, "TOP 3: ");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 80, 0, "TOP 4: ");
+                al_draw_text(font, al_map_rgb(255,255,255), 0, 100, 0, "TOP 5: ");
+
+                al_flip_display();         
+                switch (event.type)
+                {
+                    case ALLEGRO_EVENT_KEY_DOWN: 
+
+
+                if (event.keyboard.keycode == ALLEGRO_KEY_ESCAPE)
+                    is_on_fame = 0;
+
+                }
         }
 
-        
     }
 
 
