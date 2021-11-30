@@ -1,12 +1,13 @@
 #include "fall.h"
 
-void fall(MAP* map, t_knot* object,int drop_type, t_list* falling_list)
+void fall(MAP* map, t_knot* object,int drop_type, t_list* falling_list, int* rockford_dead, ALLEGRO_SAMPLE *colision_sound)
 {
     if(drop_type == DOWN)
     {
         map->data[object->y][object->x] = MAP_HOLE;
         map->data[(object->y)+1][object->x] = object->entity;
         object->y++;
+
     }
     if(drop_type == SLIDE_RIGHT)
     {
@@ -25,7 +26,7 @@ void fall(MAP* map, t_knot* object,int drop_type, t_list* falling_list)
         if(map->data[((object->y)+1)][object->x] == MAP_ROCKFORD)
     {
         remove_list(falling_list, object);
-        kill_rockford(map); 
+        kill_rockford(map, rockford_dead, colision_sound); 
         return;
     }
         else
@@ -35,9 +36,9 @@ void fall(MAP* map, t_knot* object,int drop_type, t_list* falling_list)
             object->y++;
         }
     }
-}
+}   
 
-void kill_rockford(MAP* map)
+void kill_rockford(MAP* map, int* rockford_dead, ALLEGRO_SAMPLE *colision_sound)
 {
     int rockford_x;
     int rockford_y;
@@ -52,10 +53,12 @@ void kill_rockford(MAP* map)
     map->data[rockford_y +1 ][rockford_x -1] = MAP_EXPLOSION;
     map->data[rockford_y +1 ][rockford_x   ] = MAP_EXPLOSION;
     map->data[rockford_y +1 ][rockford_x +1] = MAP_EXPLOSION;
-
+    
+    *rockford_dead = 1;
+    al_play_sample(colision_sound, 1, 0 , 1 , ALLEGRO_PLAYMODE_ONCE, 0);
 }
 
-int fall_object(MAP* map, t_list* falling_list)
+int fall_object(MAP* map, t_list* falling_list, int* rockford_dead, ALLEGRO_SAMPLE *colision_sound)
 {
     int count;
     int drop;
@@ -73,7 +76,7 @@ int fall_object(MAP* map, t_list* falling_list)
                                                                4 case kill rockford */
         if (drop)
         {
-            fall(map, knot_aux, drop, falling_list);
+            fall(map, knot_aux, drop, falling_list, rockford_dead, colision_sound);
         }
         else
         { 

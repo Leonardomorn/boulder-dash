@@ -4,6 +4,8 @@
 #include <allegro5/allegro5.h>
 #include <allegro5/allegro_font.h>
 #include <allegro5/allegro_image.h>
+#include <allegro5/allegro_audio.h>
+#include <allegro5/allegro_acodec.h>
 #include <dirent.h>
 
 #define MAP_BOULDER 1
@@ -37,4 +39,4 @@ void fill_exceptions(MAP* map); //ordenado por linha
 int draw_map(MAP map, ALLEGRO_BITMAP* boulder, ALLEGRO_BITMAP* diamond, ALLEGRO_BITMAP* dirt, ALLEGRO_BITMAP* exit,
      ALLEGRO_BITMAP* magicwall, ALLEGRO_BITMAP* steel, ALLEGRO_BITMAP* wall, ALLEGRO_BITMAP* rockford, ALLEGRO_BITMAP* hole, ALLEGRO_BITMAP* explosion);
 int find_rockford(int*x, int *y, MAP map);
-
+void open_exit(MAP* map);

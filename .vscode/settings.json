@@ -1,7 +1,8 @@
 {
     "files.associations": {
         "stdio.h": "c",
-        "allegro5.h": "c"
+        "allegro5.h": "c",
+        "allegro_font.h": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

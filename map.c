@@ -175,3 +175,7 @@ int find_rockford(int*x, int *y, MAP map)
     }    
     return has_rockford;
 }
+void open_exit(MAP* map)
+{
+    map->data[16][38] = MAP_EXIT;
+}
