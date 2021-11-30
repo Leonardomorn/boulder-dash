@@ -43,10 +43,10 @@ int main()
 		exit (1) ;
 	}
 	
-	int rank_array[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+	long rank_array[10] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 	for(int i = 0; i < 10; i++)
 	{
-		fscanf(rank,"%d\n", &rank_array[i]);
+		fscanf(rank,"%ld\n", &rank_array[i]);
 	}
 	
 	freopen ("./resources/scores.txt", "w+", rank);
@@ -138,7 +138,6 @@ int main()
             switch (event.type)
             {
             case ALLEGRO_EVENT_TIMER:
-                /*game logic goes here*/
             if(event.timer.source == timer_fall){
                 if(fall_object(&map, &falling_objects, &rockford_dead, colision_sound))
                 {
@@ -211,7 +210,7 @@ int main()
                 restart_game(&map, &falling_objects, &diamond_counter, &rockford_dead, &exit_closed, &clock, &battle_royale_var);
             }
             if (event.timer.source == timer_fall && victory){   /*when victory is true, save the score and end the game*/
-                end_game(victory_sound, &clock, &diamond_counter, rank_array);
+                end_game(victory_sound, clock, diamond_counter, rank_array);
                 sleep(1);
                 done = true;
             }
@@ -252,7 +251,7 @@ int main()
                 al_draw_text(font, al_map_rgb(255,255,255), 0, 0, 0, "[ESC] to leave Hall of Fame");
                 for (int k = 1; k <= 10; k++)
                 {
-                al_draw_textf(font, al_map_rgb(255,255,255), 0, 20 * k, 0, "TOP %d: %d",k, rank_array[k]);
+                al_draw_textf(font, al_map_rgb(255,255,255), 0, 20 * k, 0, "TOP %d: %ld",k, rank_array[k]);
                 }
             
                 al_flip_display();         
@@ -287,7 +286,7 @@ int main()
 
     for(int i = 0; i < 10; i++)
 	{
-		fprintf(rank,"%d\n", rank_array[i]);
+		fprintf(rank,"%ld\n", rank_array[i]);
 	}
 	fclose(rank);
     return 0;

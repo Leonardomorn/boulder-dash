@@ -11,9 +11,9 @@ void restart_game(MAP* map, t_list* falling_list, int* diamond_counter, int* roc
 	*clock = 150;
 	*royale = 0;
 }
-void end_game(ALLEGRO_SAMPLE* victory_sound, int* clock, int* diamond_score, int rank_array[]  )
+void end_game(ALLEGRO_SAMPLE* victory_sound, int clock, int diamond_score, long rank_array[]  )
 {
-    int allscore = *clock + *diamond_score;
+    long allscore = clock + diamond_score;
     al_play_sample(victory_sound, 1, 0, 1, ALLEGRO_PLAYMODE_ONCE, 0);
 
     
@@ -55,15 +55,20 @@ void reduce_map_royale(MAP* map, int* rockford_dead)
 			counter++;	
 	}
 
-	for(i = 0; i <= counter ; i++)
+		if(map->data[21][0] != MAP_EXPLOSION)
 		{
-			if(map->data[counter-i][i] == MAP_ROCKFORD)
+			for(i = 0; i <= counter ; i++)
 			{
-				*rockford_dead = 1;	
+				if(map->data[counter-i][i] == MAP_ROCKFORD)
+				{
+					*rockford_dead = 1;	
+				}
+				else
+					map->data[counter-i][i] = MAP_EXPLOSION;
+				return;
 			}
-			else
-				map->data[counter-i][i] = MAP_EXPLOSION;
 		}
+
 }
 void battle_royale(MAP* map, ALLEGRO_SAMPLE * explosion_sound, int* rockford_dead, int* royale)
 {
